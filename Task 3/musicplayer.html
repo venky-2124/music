@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #e0e0e0;
+            font-family: Arial, sans-serif;
+        }
+
+        .music-player {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            width: 350px;
+            text-align: center;
+            border: 2px solid #007bff;
+            max-width: 100%;
+        }
+
+        .track-image {
+            width: 100%;
+            height: 200px; /* Fixed height for consistency */
+            object-fit: cover; /* Ensures image covers the area without distortion */
+            border-radius: 8px;
+            margin-bottom: 15px; /* Space below the image */
+        }
+
+        .controls {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .controls button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .controls button:hover {
+            background: #0056b3;
+        }
+
+        .controls button:active {
+            background: #004494;
+        }
+
+        .info {
+            margin: 10px 0;
+            font-size: 1.2em;
+        }
+
+        .progress-bar,
+        .volume-control {
+            margin: 10px 0;
+        }
+
+        input[type="range"] {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="music-player">
+        <img class="track-image" id="track-image" src="track1.jpg" alt="Track Image">
+        <div class="controls">
+            <button id="prev" title="Previous"><i class="fas fa-step-backward"></i> Previous</button>
+            <button id="play" title="Play"><i class="fas fa-play"></i> Play</button>
+            <button id="pause" title="Pause"><i class="fas fa-pause"></i> Pause</button>
+            <button id="next" title="Next"><i class="fas fa-step-forward"></i> Next</button>
+        </div>
+        <div class="info">
+            <span id="track-name">Track 1</span>
+        </div>
+        <div class="progress-bar">
+            <input type="range" id="seek-bar" value="0" max="100">
+        </div>
+        <div class="volume-control">
+            <input type="range" id="volume-bar" value="100" max="100">
+        </div>
+        <audio id="audio" src="track1.mp3"></audio>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const audio = document.getElementById('audio');
+            const playButton = document.getElementById('play');
+            const pauseButton = document.getElementById('pause');
+            const prevButton = document.getElementById('prev');
+            const nextButton = document.getElementById('next');
+            const seekBar = document.getElementById('seek-bar');
+            const volumeBar = document.getElementById('volume-bar');
+            const trackName = document.getElementById('track-name');
+            const trackImage = document.getElementById('track-image');
+
+            // Array of music files and their corresponding images
+            const tracks = [
+                { src: 'track1.mp3', img: 'track1.jpg', name: 'Track 1' },
+                { src: 'track2.mp3', img: 'track2.jpg', name: 'Track 2' },
+                { src: 'track3.mp3', img: 'track3.jpg', name: 'Track 3' }
+            ];
+            let currentTrackIndex = 0;
+
+            function loadTrack(index) {
+                audio.src = tracks[index].src;
+                trackImage.src = tracks[index].img;
+                trackName.textContent = tracks[index].name;
+                audio.play();
+            }
+
+            playButton.addEventListener('click', () => {
+                audio.play();
+            });
+
+            pauseButton.addEventListener('click', () => {
+                audio.pause();
+            });
+
+            prevButton.addEventListener('click', () => {
+                currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+                loadTrack(currentTrackIndex);
+            });
+
+            nextButton.addEventListener('click', () => {
+                currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+                loadTrack(currentTrackIndex);
+            });
+
+            seekBar.addEventListener('input', () => {
+                audio.currentTime = (seekBar.value / 100) * audio.duration;
+            });
+
+            audio.addEventListener('timeupdate', () => {
+                seekBar.value = (audio.currentTime / audio.duration) * 100;
+            });
+
+            volumeBar.addEventListener('input', () => {
+                audio.volume = volumeBar.value / 100;
+            });
+
+            // Initialize
+            loadTrack(currentTrackIndex);
+        });
+    </script>
+</body>
+</html>
